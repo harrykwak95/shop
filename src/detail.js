@@ -6,8 +6,9 @@ import {useEffect, useState} from "react";
 function Detail(props) {
 
     let {detailId} = useParams();
-    const shoes = props.shoes[detailId];
-    const shoesImgNum = shoes.id+1;
+    const shoes = props.shoes;
+    const shoesOne = props.shoes[detailId];
+    const shoesImgNum = shoesOne.id+1;
     const imgLink = "https://codingapple1.github.io/shop/shoes"+shoesImgNum+".jpg";
 
     const [displayDiscount, setDisplayDiscount] = useState(true);
@@ -30,7 +31,7 @@ function Detail(props) {
     }, []);
 
     useEffect(() => {
-        let tabEffect = setTimeout(()=>{setDetailFade('end')}, 100)
+        let tabEffect = setTimeout(()=>{setDetailFade('end')}, 200)
         return()=>{
             clearTimeout(tabEffect);
             setDetailFade('')
@@ -63,9 +64,9 @@ function Detail(props) {
                                 <p>숫자만 입력해주세요!</p>
                             }
                             <input type="text" value={onlyNum} onChange={(i, e)=>{ onlyNumFunc(i, e); }}/>
-                            <h4 className="pt-5">{shoes.title}</h4>
-                            <p>{shoes.content}</p>
-                            <p>{shoes.price.toLocaleString()}원</p>
+                            <h4 className="pt-5">{shoesOne.title}</h4>
+                            <p>{shoesOne.content}</p>
+                            <p>{shoesOne.price.toLocaleString()}원</p>
                             <button className="btn btn-danger">주문하기</button>
                         </Col>
                     </Row>
@@ -80,7 +81,7 @@ function Detail(props) {
                             <Nav.Link eventKey="link-3" onClick={()=>setTabState(2)}>버튼3</Nav.Link>
                         </Nav.Item>
                     </Nav>
-                    <TabContent tabState={tabState}/>
+                    <TabContent tabState={tabState} shoes={shoes}/>
 
 
                 </Container>
@@ -88,21 +89,22 @@ function Detail(props) {
     );
 }
 
-function TabContent({tabState}){
+function TabContent({tabState, shoes}){
 
     let [fade, setFade] = useState('');
 
+    // 깜빡이는 현상(이전 값 가지고 있으면서 바뀌는)을 없애기 위한 컴포넌트 상태 값
+    const [tabContentState, setTabContentState] = useState(tabState);
+
     useEffect(() => {
-        let tabEffect = setTimeout(()=>{setFade('end')}, 100)
-        return()=>{
-            clearTimeout(tabEffect);
-            setFade('')
-        }
+        setTabContentState(tabState);
+        setFade('');
+        setTimeout(()=>{setFade('end')}, 200)
     }, [tabState]);
 
     return (
         <div className={`start ${fade}`}>
-            {[<div>내용1</div>, <div>내용2</div>, <div>내용3</div>][tabState]}
+            {[<div>{shoes[0].title}</div>, <div>{shoes[1].title}</div>, <div>{shoes[2].title}</div>][tabContentState]}
         </div>
     )
 }
